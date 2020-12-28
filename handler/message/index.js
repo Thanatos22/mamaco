@@ -46,31 +46,7 @@ module.exports = msgHandler = async (client, message) => {
         msgFilter.addFilter(from)
 
         switch (command) {
-        // Menu and TnC
-        case '':
-        case '':
-            await client.sendText(from, `Pong!!!!\nSpeed: ${processTime(t, moment())} _Second_`)
-            break
-        case '':
-            await client.sendText(from, menuId.textTnC())
-            break
-        case '':
-        case '':
-            await client.sendText(from, menuId.textMenu(pushname))
-                .then(() => ((isGroupMsg) && (isGroupAdmins)) ? client.sendText(from, 'Menu Admin Grup: *#menuadmin*') : null)
-            break
-        case '':
-            if (!isGroupMsg) return client.reply(from, 'Maaf, perintah ini hanya dapat dipakai didalam grup! [Group Only]', id)
-            if (!isGroupAdmins) return client.reply(from, 'Gagal, perintah ini hanya dapat digunakan oleh admin grup! [Admin Group Only]', id)
-            await client.sendText(from, menuId.textAdmin())
-            break
-        case '':
-        case '':
-            await client.sendText(from, menuId.textDonasi())
-            break
-        // Sticker Creator
-        case 'sticker2':
-        case '': {
+        case 'sticker2': {
             if ((isMedia || isQuotedImage) && args.length === 0) {
                 const encryptMedia = isQuotedImage ? quotedMsg : message
                 const _mimetype = isQuotedImage ? quotedMsg.mimetype : mimetype
@@ -80,64 +56,12 @@ module.exports = msgHandler = async (client, message) => {
                     client.reply(from, '')
                     console.log(`Sticker Processed for ${processTime(t, moment())} Second`)
                 })
-            } else if (args[0] === 'nobg') {
-                /**
-                * This is Premium feature.
-                * Check premium feature at https://trakteer.id/red-emperor/showcase or chat Author for Information.
-                */
-                client.reply(from, 'ehhh, what\'s that???', id)
-            } else if (args.length === 1) {
-                if (!is.Url(url)) { await client.reply(from, 'Maaf, link yang kamu kirim tidak valid. [Invalid Link]', id) }
-                client.sendStickerfromUrl(from, url).then((r) => (!r && r !== undefined)
-                    ? client.sendText(from, 'Maaf, link yang kamu kirim tidak memuat gambar. [No Image]')
-                    : client.reply(from, 'Here\'s your sticker')).then(() => console.log(`Sticker Processed for ${processTime(t, moment())} Second`))
-            } else {
-                await client.reply(from, 'Tidak ada gambar! Untuk membuka daftar perintah kirim #menu [Wrong Format]', id)
-            }
-            break
-        }
-        case '':
-        case '':
-        case '':
-        case '': {
-            if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            if (is.Giphy(url)) {
-                const getGiphyCode = url.match(new RegExp(/(\/|\-)(?:.(?!(\/|\-)))+$/, 'gi'))
-                if (!getGiphyCode) { return client.reply(from, 'Gagal mengambil kode giphy', id) }
-                const giphyCode = getGiphyCode[0].replace(/[-\/]/gi, '')
-                const smallGifUrl = 'https://media.giphy.com/media/' + giphyCode + '/giphy-downsized.gif'
-                client.sendGiphyAsSticker(from, smallGifUrl).then(() => {
-                    client.reply(from, 'Here\'s your sticker')
-                    console.log(`Sticker Processed for ${processTime(t, moment())} Second`)
-                }).catch((err) => console.log(err))
-            } else if (is.MediaGiphy(url)) {
-                const gifUrl = url.match(new RegExp(/(giphy|source).(gif|mp4)/, 'gi'))
-                if (!gifUrl) { return client.reply(from, 'Gagal mengambil kode giphy', id) }
-                const smallGifUrl = url.replace(gifUrl[0], 'giphy-downsized.gif')
-                client.sendGiphyAsSticker(from, smallGifUrl).then(() => {
-                    client.reply(from, 'Here\'s your sticker')
-                    console.log(`Sticker Processed for ${processTime(t, moment())} Second`)
-                }).catch((err) => console.log(err))
-            } else {
-                await client.reply(from, 'maaf, untuk saat ini sticker gif hanya bisa menggunakan link dari giphy.  [Giphy Only]', id)
             }
             break
         }
         // Video Downloader
-        case '':
-            if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            if (!is.Url(url) && !url.includes('tiktok.com')) return client.reply(from, 'Maaf, link yang kamu kirim tidak valid. [Invalid Link]', id)
-            await client.reply(from, `_Scraping Metadata..._ \n\n${menuId.textDonasi()}`, id)
-            downloader.tiktok(url).then(async (videoMeta) => {
-                const filename = videoMeta.authorMeta.name + '.mp4'
-                const caps = `*Metadata:*\nUsername: ${videoMeta.authorMeta.name} \nMusic: ${videoMeta.musicMeta.musicName} \nView: ${videoMeta.playCount.toLocaleString()} \nLike: ${videoMeta.diggCount.toLocaleString()} \nComment: ${videoMeta.commentCount.toLocaleString()} \nShare: ${videoMeta.shareCount.toLocaleString()} \nCaption: ${videoMeta.text.trim() ? videoMeta.text : '-'}`
-                await client.sendFileFromUrl(from, videoMeta.url, filename, videoMeta.NoWaterMark ? caps : `⚠ Video tanpa watermark tidak tersedia. \n\n${caps}`, '', { headers: { 'User-Agent': 'okhttp/4.5.0', referer: 'https://www.tiktok.com/' } }, true)
-                    .then((serialized) => console.log(`Sukses Mengirim File dengan id: ${serialized} diproses selama ${processTime(t, moment())}`))
-                    .catch((err) => console.error(err))
-            }).catch(() => client.reply(from, 'Gagal mengambil metadata, link yang kamu kirim tidak valid. [Invalid Link]', id))
-            break
+        
         case 'ig':
-        case '':
             if (args.length !== 1) return client.reply(from, 'C fez alguma coisa de errado macaco', id)
             if (!is.Url(url) && !url.includes('instagram.com')) return client.reply(from, 'manda o link direito man', id)
             await client.reply(from, `_Scraping Metadata..._ \n\n${menuId.textDonasi()}`, id)
@@ -170,7 +94,6 @@ module.exports = msgHandler = async (client, message) => {
                 })
             break
         case 'tt':
-        case '':
             if (args.length !== 1) return client.reply(from, 'C fez alguma coisa de errado macaco', id)
             if (!is.Url(url) & !url.includes('twitter.com') || url.includes('t.co')) return client.reply(from, 'manda o link direito man', id)
             await client.reply(from, `_Scraping Metadata..._ \n\n${menuId.textDonasi()}`, id)
@@ -192,30 +115,7 @@ module.exports = msgHandler = async (client, message) => {
             })
                 .catch(() => client.sendText(from, 'manda o link direito man'))
             break
-        case '':
-        case '':
-            if (args.length !== 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            if (!is.Url(url) && !url.includes('facebook.com')) return client.reply(from, 'Maaf, url yang kamu kirim tidak valid. [Invalid Link]', id)
-            await client.reply(from, '_Scraping Metadata..._ \n\nTerimakasih telah menggunakan bot ini, kamu dapat membantu pengembangan bot ini dengan menyawer melalui https://saweria.co/donate/yogasakti atau mentrakteer melalui https://trakteer.id/red-emperor \nTerimakasih.', id)
-            downloader.facebook(url).then(async (videoMeta) => {
-                const title = videoMeta.response.title
-                const thumbnail = videoMeta.response.thumbnail
-                const links = videoMeta.response.links
-                const shorts = []
-                for (let i = 0; i < links.length; i++) {
-                    const shortener = await urlShortener(links[i].url)
-                    console.log('Shortlink: ' + shortener)
-                    links[i].short = shortener
-                    shorts.push(links[i])
-                }
-                const link = shorts.map((x) => `${x.resolution} Quality: ${x.short}`)
-                const caption = `Text: ${title} \n\nLink Download: \n${link.join('\n')} \n\nProcessed for ${processTime(t, moment())} _Second_`
-                await client.sendFileFromUrl(from, thumbnail, 'videos.jpg', caption, null, null, true)
-                    .then((serialized) => console.log(`Sukses Mengirim File dengan id: ${serialized} diproses selama ${processTime(t, moment())}`))
-                    .catch((err) => console.error(err))
-            })
-                .catch((err) => client.reply(from, `Error, url tidak valid atau tidak memuat video. [Invalid Link or No Video] \n\n${err}`, id))
-            break
+
         // Other Command
         case 'mkmeme':
             if ((isMedia || isQuotedImage) && args.length >= 2) {
@@ -232,49 +132,7 @@ module.exports = msgHandler = async (client, message) => {
                 await client.reply(from, 'pra fazer a desgraça do meme vc tem que marcar uma imagem com o comando acima e escrever o texto que vc quer, é muito simples e aparentemente msm assim vc conseguiu fazer errado', id)
             }
             break
-        case '':
-            if (args.length !== 2) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            const kurirs = ['jne', 'pos', 'tiki', 'wahana', 'jnt', 'rpx', 'sap', 'sicepat', 'pcp', 'jet', 'dse', 'first', 'ninja', 'lion', 'idl', 'rex']
-            if (!kurirs.includes(args[0])) return client.sendText(from, `Maaf, jenis ekspedisi pengiriman tidak didukung layanan ini hanya mendukung ekspedisi pengiriman ${kurirs.join(', ')} Tolong periksa kembali.`)
-            console.log('Memeriksa No Resi', args[1], 'dengan ekspedisi', args[0])
-            cekResi(args[0], args[1]).then((result) => client.sendText(from, result))
-            break
-        case '':
-            if (args.length != 1) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            if (!quotedMsg) return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            const quoteText = quotedMsg.type == 'chat' ? quotedMsg.body : quotedMsg.type == 'image' ? quotedMsg.caption : ''
-            translate(quoteText, args[0])
-                .then((result) => client.sendText(from, result))
-                .catch(() => client.sendText(from, '[Error] Kode bahasa salah atau server bermasalah.'))
-            break
-        case '':
-        case '':
-            if (!quotedMsg || quotedMsg.type !== 'location') return client.reply(from, 'Maaf, format pesan salah silahkan periksa menu. [Wrong Format]', id)
-            console.log(`Request Status Zona Penyebaran Covid-19 (${quotedMsg.lat}, ${quotedMsg.lng}).`)
-            const zoneStatus = await getLocationData(quotedMsg.lat, quotedMsg.lng)
-            if (zoneStatus.kode !== 200) client.sendText(from, 'Maaf, Terjadi error ketika memeriksa lokasi yang anda kirim.')
-            let data = ''
-            for (let i = 0; i < zoneStatus.data.length; i++) {
-                const { zone, region } = zoneStatus.data[i]
-                const _zone = zone == 'green' ? 'Hijau* (Aman) \n' : zone == 'yellow' ? 'Kuning* (Waspada) \n' : 'Merah* (Bahaya) \n'
-                data += `${i + 1}. Kel. *${region}* Berstatus *Zona ${_zone}`
-            }
-            const text = `*CEK LOKASI PENYEBARAN COVID-19*\nHasil pemeriksaan dari lokasi yang anda kirim adalah *${zoneStatus.status}* ${zoneStatus.optional}\n\nInformasi lokasi terdampak disekitar anda:\n${data}`
-            client.sendText(from, text)
-            break
         // Group Commands (group admin only)
-        case '':
-            if (!isGroupMsg) return client.reply(from, 'Essa porra de comando so pode ser usado em grupos', id)
-            if (!isGroupAdmins) return client.reply(from, '  Este comando só pode ser usado por administradores do grupo  ', id)
-            if (!isBotGroupAdmins) return client.reply(from, '  Este comando só pode ser usado quando o bot for adm  ', id)
-            if (mentionedJidList.length === 0) return client.reply(from, 'tu fez alguma merda ai parcero', id)
-            if (mentionedJidList[0] === botNumber) return await client.reply(from, 'tu fez alguma merda ai parcero', id)
-            await client.sendTextWithMentions(from, `Request diterima, mengeluarkan:\n${mentionedJidList.map(x => `@${x.replace('@c.us', '')}`).join('\n')}`)
-            for (let i = 0; i < mentionedJidList.length; i++) {
-                if (groupAdmins.includes(mentionedJidList[i])) return await client.sendText(from, 'porra meno ta querendo remover adm')
-                await client.removeParticipant(groupId, mentionedJidList[i])
-            }
-            break
         case 'promote':
             if (!isGroupMsg) return await client.reply(from, 'Essa porra de comando so pode ser usado em grupos', id)
             if (!isGroupAdmins) return await client.reply(from, 'Este comando só pode ser usado por administradores do grupo  ', id)
@@ -295,30 +153,11 @@ module.exports = msgHandler = async (client, message) => {
             await client.demoteParticipant(groupId, mentionedJidList[0])
             await client.sendTextWithMentions(from, `Request diterima, menghapus jabatan @${mentionedJidList[0].replace('@c.us', '')}.`)
             break
-        case '':
-            if (!isGroupMsg) return client.reply(from, 'Maaf, perintah ini hanya dapat dipakai didalam grup! [Group Only]', id)
-            if (!isGroupAdmins) return client.reply(from, 'Gagal, perintah ini hanya dapat digunakan oleh admin grup! [Admin Group Only]', id)
-            client.sendText(from, 'Good bye... ( ⇀‸↼‶ )').then(() => client.leaveGroup(groupId))
-            break
         case 'del':
             if (!isGroupAdmins) return client.reply(from, 'Este comando só pode ser usado por administradores do grupo  ', id)
             if (!quotedMsg) return client.reply(from, 'tu fez alguma merda ai parcero]', id)
             if (!quotedMsgObj.fromMe) return client.reply(from, 'tu fez alguma merda ai parcero', id)
             client.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
-            break
-        case '':
-        case '':
-            /**
-            * This is Premium feature.
-            * Check premium feature at https://trakteer.id/red-emperor/showcase or chat Author for Information.
-            */
-            client.reply(from, 'ehhh, what\'s that??? \n Check premium feature at https://trakteer.id/red-emperor/showcase or chat Author for Information', id)
-            break
-        case '': {
-            const loadedMsg = await client.getAmountOfLoadedMessages()
-            const chatIds = await client.getAllChatIds()
-            const groups = await client.getAllGroups()
-            client.sendText(from, `Status :\n- *${loadedMsg}* Loaded Messages\n- *${groups.length}* Group Chats\n- *${chatIds.length - groups.length}* Personal Chats\n- *${chatIds.length}* Total Chats`)
             break
         }
         default:
